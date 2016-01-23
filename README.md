@@ -1,16 +1,28 @@
 LampGenie - crawling 강좌
 
-1. 파이썬 시작하기.
-- 맥이나 리눅스라면 이미 python은 있는 것이고, 윈도우라면 새로 설치해야 할 것이다. 이건 설명에서 제외하도록 한다. google에서 "윈도우에서 파이썬 설치하기" 정도로도 많은 문서를 찾을 수 있다.
+1. 일단 cmd나 terminal 을 열어서 python 1_get_Url.py 실행해보자.
 
-2. 에디터
-- 메모장이어도 상관없다. 파일이름만 .py 확장자로 지정해주고 윈도우의 cmd나 리눅스/맥의 터미널에서
- '''python 1_get_Url.py''' 로 실행하면 된다. 에디터는 보조일 뿐임을 잊지말자.
+2. python이 없으면? python을 설치한다.
 
-3. import
-- import requests부터 시작한다.
-- pip, easy_install 설치 후 pip install requests로 설치한다.
-- pypi 설명.
+3. requests가 없으면?
 
-4. crawling 들어가기. 
+    pip install requirement
+
+4. pip가 없다.
+
+    https://www.google.com/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=pip%20%EC%84%A4%EC%B9%98
+
+5. 다시 
+
+    python 1_get_Url.py
+
+6. 이번엔 BeautifulSoup가 없어!
+
+    pip install BeautifulSoup
+
+7. 그럼 Python은 모든 import를 확인하고 다 깔아야 하나요? - 그래서 나온게 requirements.txt!!
+
+    pip install -r requirements.txt
+
+
 
