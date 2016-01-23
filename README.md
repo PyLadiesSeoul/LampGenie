@@ -24,5 +24,3 @@ LampGenie - crawling 강좌
 
     pip install -r requirements.txt
 
-
-
