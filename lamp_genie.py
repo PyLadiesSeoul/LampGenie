@@ -5,25 +5,35 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+def aladin_shoplist():
+    result = []
+    mobile_site_url = "http://www.aladin.co.kr"
+    response = requests.get(mobile_site_url + '/m/off/gate.aspx?')
+    content = response.content
+    shop_list = BeautifulSoup.BeautifulSoup(content).findAll('td')
+    for x in shop_list:
+        url = x.find('a')
+        if url:
+            result.append((x.text, url['href']))
+    return result
+
+def search_aladin(search_txt, location):
+    return result
+
 mobile_site_url = "http://www.aladin.co.kr"
 search_url = "http://off.aladin.co.kr/usedstore/wsearchresult.aspx?SearchWord=%s&x=0&y=0"
 book_url = "http://off.aladin.co.kr/usedstore/wproduct.aspx?ISBN=%d"
 
-response = requests.get(mobile_site_url + '/m/off/gate.aspx?')
-content = response.content
-
 search_text = requests.utils.quote(raw_input("검색할 책 제목이나 글쓴이 : ").encode('cp949'))
-shop_list = BeautifulSoup.BeautifulSoup(content).findAll('td')
+shop_list = aladin_shoplist()
 
 s = requests.Session()
 for x in shop_list:
     print "=" * 50
     try:
-        shop_location = x.text
-        url = x.find('a')
-        response = s.get(mobile_site_url + url['href'])
+        shop_location = x[0]
+        response = s.get(mobile_site_url + x[1])
         url = search_url % search_text
-        print url
         response = s.get(url)
         content = response.content
         result = BeautifulSoup.BeautifulSoup(content).find('div', {'id':'Search3_Result'})
@@ -39,3 +49,5 @@ for x in shop_list:
             print set()
     except Exception as e:
         pass
+
+
