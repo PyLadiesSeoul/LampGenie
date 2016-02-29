@@ -1,38 +1,38 @@
 #-*- coding: utf-8 -*-
 import requests
-import BeautifulSoup
+import bs4  as BeautifulSoup
 import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
-def aladin_shoplist():
-    result = []
+def get_shoplist():
     mobile_site_url = "http://www.aladin.co.kr"
+    search_url = "http://off.aladin.co.kr/usedstore/wsearchresult.aspx?SearchWord=%s&x=0&y=0"
     response = requests.get(mobile_site_url + '/m/off/gate.aspx?')
     content = response.content
+    search_text = requests.utils.quote(input("검색할 책 제목이나 글쓴이 : ").encode('cp949'))
     shop_list = BeautifulSoup.BeautifulSoup(content).findAll('td')
-    for x in shop_list:
-        url = x.find('a')
-        if url:
-            result.append((x.text, url['href']))
-    return result
+    return shop_list
 
-def search_aladin(search_txt, location):
-    return result
-
-mobile_site_url = "http://www.aladin.co.kr"
-search_url = "http://off.aladin.co.kr/usedstore/wsearchresult.aspx?SearchWord=%s&x=0&y=0"
-book_url = "http://off.aladin.co.kr/usedstore/wproduct.aspx?ISBN=%d"
-
-search_text = requests.utils.quote(raw_input("검색할 책 제목이나 글쓴이 : ").encode('cp949'))
-shop_list = aladin_shoplist()
+def parse_book(isbn):
+    book_url = "http://off.aladin.co.kr/usedstore/wproduct.aspx?ISBN=%d"
+    url = book_url % int(isbn)
+    response = requests.get(url, )
+    content = response.text
+    result = BeautifulSoup.BeautifulSoup(content).find('div', {'class':'us_prod_info'})
+    title = result.find('a', {'class':"bo_title"}).text
+    try:
+        print(url, title)
+    except Exception as e:
+        print(e)
 
 s = requests.Session()
+shop_list = get_shoplist()
 for x in shop_list:
-    print "=" * 50
+    print ("=" * 50)
     try:
-        shop_location = x[0]
-        response = s.get(mobile_site_url + x[1])
+        shop_location = x.text
+        print(shop_location)
+        url = x.find('a')
+        response = s.get(mobile_site_url + url['href'])
         url = search_url % search_text
         response = s.get(url)
         content = response.content
@@ -44,10 +44,9 @@ for x in shop_list:
                 if search_code.__len__() > 1:
                     isbn = search_code[1].split('"')[0]
                     result_list.add(isbn)
-            print shop_location, result_list
+            for result in result_list:
+                parse_book(result)
         except:
-            print set()
+            print(set())
     except Exception as e:
         pass
-
-
