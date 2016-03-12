@@ -3,12 +3,12 @@ import requests
 import bs4  as BeautifulSoup
 import sys
 
+mobile_site_url = "http://www.aladin.co.kr"
+search_url = "http://off.aladin.co.kr/usedstore/wsearchresult.aspx?SearchWord=%s&x=0&y=0"
+
 def get_shoplist():
-    mobile_site_url = "http://www.aladin.co.kr"
-    search_url = "http://off.aladin.co.kr/usedstore/wsearchresult.aspx?SearchWord=%s&x=0&y=0"
     response = requests.get(mobile_site_url + '/m/off/gate.aspx?')
     content = response.content
-    search_text = requests.utils.quote(input("검색할 책 제목이나 글쓴이 : ").encode('cp949'))
     shop_list = BeautifulSoup.BeautifulSoup(content).findAll('td')
     return shop_list
 
@@ -25,6 +25,7 @@ def parse_book(isbn):
         print(e)
 
 s = requests.Session()
+search_text = requests.utils.quote(input("검색할 책 제목이나 글쓴이 : ").encode('cp949'))
 shop_list = get_shoplist()
 for x in shop_list:
     print ("=" * 50)
