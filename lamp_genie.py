@@ -24,30 +24,31 @@ def parse_book(isbn):
     except Exception as e:
         print(e)
 
-s = requests.Session()
-search_text = requests.utils.quote(input("검색할 책 제목이나 글쓴이 : ").encode('cp949'))
-shop_list = get_shoplist()
-for x in shop_list:
-    print ("=" * 50)
-    try:
-        shop_location = x.text
-        print(shop_location)
-        url = x.find('a')
-        response = s.get(mobile_site_url + url['href'])
-        url = search_url % search_text
-        response = s.get(url)
-        content = response.content
-        result = BeautifulSoup.BeautifulSoup(content).find('div', {'id':'Search3_Result'})
+if __name__ == '__main__':
+    s = requests.Session()
+    search_text = requests.utils.quote(input("검색할 책 제목이나 글쓴이 : ").encode('cp949'))
+    shop_list = get_shoplist()
+    for x in shop_list:
+        print ("=" * 50)
         try:
-            result_list = set()
-            for x in result.findAll('a'):
-                search_code = str(x).split('ISBN=')
-                if search_code.__len__() > 1:
-                    isbn = search_code[1].split('"')[0]
-                    result_list.add(isbn)
-            for result in result_list:
-                parse_book(result)
-        except:
-            print(set())
-    except Exception as e:
-        pass
+            shop_location = x.text
+            print(shop_location)
+            url = x.find('a')
+            response = s.get(mobile_site_url + url['href'])
+            url = search_url % search_text
+            response = s.get(url)
+            content = response.content
+            result = BeautifulSoup.BeautifulSoup(content).find('div', {'id':'Search3_Result'})
+            try:
+                result_list = set()
+                for x in result.findAll('a'):
+                    search_code = str(x).split('ISBN=')
+                    if search_code.__len__() > 1:
+                        isbn = search_code[1].split('"')[0]
+                        result_list.add(isbn)
+                for result in result_list:
+                    parse_book(result)
+            except:
+                print(set())
+        except Exception as e:
+            pass
