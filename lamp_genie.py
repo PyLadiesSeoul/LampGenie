@@ -21,34 +21,42 @@ def parse_book(isbn):
     title = result.find('a', {'class':"bo_title"}).text
     try:
         print(url, title)
+        return (url, title)
     except Exception as e:
         print(e)
 
-if __name__ == '__main__':
+def search(location_url, text, s):
+    response = s.get(location_url)
+    url = search_url % text
+    response = s.get(url)
+    content = response.content
+    result = BeautifulSoup.BeautifulSoup(content).find('div', {'id':'Search3_Result'})
+    book_list = []
+    try:
+        result_list = set()
+        for x in result.findAll('a'):
+            search_code = str(x).split('ISBN=')
+            if search_code.__len__() > 1:
+                isbn = search_code[1].split('"')[0]
+                result_list.add(isbn)
+        for result in result_list:
+            book_list.append(parse_book(result))
+    except:
+        print('no result')
+    return book_list
+
+def search_from_all(text):
     s = requests.Session()
-    search_text = requests.utils.quote(input("검색할 책 제목이나 글쓴이 : ").encode('cp949'))
     shop_list = get_shoplist()
     for x in shop_list:
-        print ("=" * 50)
         try:
             shop_location = x.text
             print(shop_location)
             url = x.find('a')
-            response = s.get(mobile_site_url + url['href'])
-            url = search_url % search_text
-            response = s.get(url)
-            content = response.content
-            result = BeautifulSoup.BeautifulSoup(content).find('div', {'id':'Search3_Result'})
-            try:
-                result_list = set()
-                for x in result.findAll('a'):
-                    search_code = str(x).split('ISBN=')
-                    if search_code.__len__() > 1:
-                        isbn = search_code[1].split('"')[0]
-                        result_list.add(isbn)
-                for result in result_list:
-                    parse_book(result)
-            except:
-                print(set())
+            book_list = search(mobile_site_url + url['href'], text, s)
         except Exception as e:
             pass
+
+if __name__ == '__main__':
+    search_text = requests.utils.quote(input("검색할 책 제목이나 글쓴이 : ").encode('cp949'))
+    search_from_all(search_text)
