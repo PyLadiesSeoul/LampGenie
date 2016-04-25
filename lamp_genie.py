@@ -20,7 +20,6 @@ def parse_book(isbn):
     result = BeautifulSoup.BeautifulSoup(content).find('div', {'class':'us_prod_info'})
     title = result.find('a', {'class':"bo_title"}).text
     try:
-        print(url, title)
         return (url, title)
     except Exception as e:
         print(e)
@@ -42,21 +41,23 @@ def search(location_url, text, s):
         for result in result_list:
             book_list.append(parse_book(result))
     except:
-        print('no result')
+        pass
     return book_list
 
 def search_from_all(text):
     s = requests.Session()
+    text = requests.utils.quote(text)
     shop_list = get_shoplist()
+    book_list = {}
     for x in shop_list:
         try:
             shop_location = x.text
-            print(shop_location)
             url = x.find('a')
-            book_list = search(mobile_site_url + url['href'], text, s)
+            book_list[shop_location] = search(mobile_site_url + url['href'], text, s)
         except Exception as e:
             pass
+    return book_list
 
 if __name__ == '__main__':
-    search_text = requests.utils.quote(input("검색할 책 제목이나 글쓴이 : ").encode('cp949'))
-    search_from_all(search_text)
+    input_txt = input("검색할 책 제목이나 글쓴이 : ").encode('cp949')
+    print(search_from_all(input_txt))
