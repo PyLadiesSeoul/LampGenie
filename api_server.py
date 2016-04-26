@@ -2,11 +2,23 @@ from flask import Flask, jsonify
 import lamp_genie
 app = Flask(__name__)
 
-@app.route("/", methods=['GET', 'POST'])
+@app.route("/lampgenie", methods=['GET', 'POST'])
 def hello():
-    return "aladin used book search api"
+    desc = """
+    <html>
+    <head></head>
+    <body>
+    <h1>aladin used book search api</h1>
+    <div>
+    검색 방법.<br/>
+    /lampgenie/search/검색어 로 검색한다. 한 2분쯤 걸리니 당황하지 않았으면 좋겠다....
+    </div>
+    </body>
+    </html>
+    """
+    return desc
 
-@app.route("/search/<text>", methods=['GET', 'POST'])
+@app.route("/lampgenie/search/<text>", methods=['GET', 'POST'])
 def search(text):
     input_txt = text.encode('cp949')
     data = lamp_genie.search_from_all(input_txt)
@@ -14,4 +26,4 @@ def search(text):
     
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0', port=8080)
