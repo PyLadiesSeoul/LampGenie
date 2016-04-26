@@ -24,7 +24,9 @@ def parse_book(isbn):
     except Exception as e:
         print(e)
 
-def search(location_url, text, s):
+def search(location_url, text):
+    text = requests.utils.quote(text)
+    s = requests.Session()
     response = s.get(location_url)
     url = search_url % text
     response = s.get(url)
@@ -45,15 +47,13 @@ def search(location_url, text, s):
     return book_list
 
 def search_from_all(text):
-    s = requests.Session()
-    text = requests.utils.quote(text)
     shop_list = get_shoplist()
     book_list = {}
     for x in shop_list:
         try:
             shop_location = x.text
             url = x.find('a')
-            book_list[shop_location] = search(mobile_site_url + url['href'], text, s)
+            book_list[shop_location] = search(mobile_site_url + url['href'], text)
         except Exception as e:
             pass
     return book_list
