@@ -5,7 +5,8 @@
 # 돌리는 법 예시.
 
 1. command line으로 실행하기.
-    
+   
+    ''' 
     hinyeajis-MacBook-Pro:pyladies-lampgenie yeaji$ python3 lamp_genie.py
     검색할 책 제목이나 글쓴이 : 드래곤볼
     ==================================================
@@ -20,6 +21,7 @@
     광주점
     http://off.aladin.co.kr/usedstore/wproduct.aspx?ISBN=8925242885 드래곤볼 에볼루션 1
     http://off.aladin.co.kr/usedstore/wproduct.aspx?ISBN=8994700927 드래곤 플라이트 히스터리 탐험대 2
+    '''
 
 2. web server api로 실행하기.
 
