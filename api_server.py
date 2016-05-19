@@ -1,6 +1,11 @@
 from flask import Flask, jsonify
+from pymongo import MongoClient
 import lamp_genie
+from datetime import datetime, timedelta
+import json
 app = Flask(__name__)
+mongo = MongoClient('localhost', 27017)
+mongodb = mongo.aladin
 
 @app.route("/lampgenie", methods=['GET'])
 def hello():
@@ -12,6 +17,8 @@ def hello():
     <div>
     검색 방법.<br/>
     /lampgenie/search/검색어 로 검색한다. 한 2분쯤 걸리니 당황하지 않았으면 좋겠다....
+    /lampgenie/shoplist 모든 상점<br/>
+    /lampgenie/{location}/{검색어} 해당 상점의 검색결과. ex) /lampgenie/gangnam/건담 <br/>
     </div>
     </body>
     </html>
@@ -20,13 +27,27 @@ def hello():
 
 @app.route("/lampgenie/shoplist", methods=['GET'])
 def shoplist():
-    shoplist = lamp_genie.get_shoplist()
-    result = {}
-    for shop in shoplist:
-        s = str(shop).split("offcode=")
-        if s.__len__() > 1:
-            code = str(s[1]).split("\">")[0]
-            result[shop.text] = code 
+    mongo_shoplist = mongodb.shoplist
+    cache_shop = mongo_shoplist.find({'last_update':{'$exists': True}})
+    if cache_shop.count() > 0:
+        result = cache_shop[0]
+        if datetime.now() - result['last_update'] <= timedelta(minutes=1):
+            return jsonify(result)
+    else:
+        cache_shop = {}
+    try:
+        shoplist = lamp_genie.get_shoplist()
+        result = {}
+        for shop in shoplist:
+            s = str(shop).split("offcode=")
+            if s.__len__() > 1:
+                code = str(s[1]).split("\">")[0]
+                result[shop.text] = code 
+        result['last_update'] = datetime.now()
+    except e as Exception:
+        print(e)
+    cache_shop[0].update(result)
+    mongo_shoplist.save(cache_shop[0])
     return jsonify(result)
 
 @app.route("/lampgenie/<shop>/<text>", methods=['GET', 'POST'])
