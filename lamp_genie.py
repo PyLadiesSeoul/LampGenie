@@ -4,7 +4,8 @@ import bs4  as BeautifulSoup
 import sys
 
 mobile_site_url = "http://www.aladin.co.kr"
-search_url = "http://off.aladin.co.kr/usedstore/wsearchresult.aspx?SearchWord=%s&x=0&y=0"
+# [TODO] search all page. - consider api rule.
+search_url = "http://off.aladin.co.kr/usedstore/wsearchresult.aspx?SearchWord=%s&x=0&y=0&page=1"
 
 def get_shoplist():
     response = requests.get(mobile_site_url + '/m/off/gate.aspx?')
@@ -20,7 +21,7 @@ def parse_book(isbn):
     result = BeautifulSoup.BeautifulSoup(content).find('div', {'class':'us_prod_info'})
     title = result.find('a', {'class':"bo_title"}).text
     try:
-        return (url, title)
+        return (str(title), url)
     except Exception as e:
         print(e)
 
