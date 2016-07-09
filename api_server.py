@@ -29,12 +29,12 @@ def hello():
 def shoplist():
     mongo_shoplist = mongodb.shoplist
     cache_shop = mongo_shoplist.find({'last_update':{'$exists': True}})
-    if cache_shop.count() > 0:
-        result = cache_shop[0]
-        if datetime.now() - result['last_update'] <= timedelta(minutes=1):
-            return jsonify(result)
-    else:
-        cache_shop = {}
+    for r in cache_shop:
+        if datetime.now() - r['last_update'] <= timedelta(hours=1):
+            r.pop("_id", None)
+            return jsonify(r)
+        else:
+            cache_shop = {}
     try:
         shoplist = lamp_genie.get_shoplist()
         result = {}
@@ -44,10 +44,10 @@ def shoplist():
                 code = str(s[1]).split("\">")[0]
                 result[shop.text] = code 
         result['last_update'] = datetime.now()
-    except e as Exception:
+    except Exception as e:
         print(e)
-    cache_shop[0].update(result)
-    mongo_shoplist.save(cache_shop[0])
+    r.update(result)
+    mongo_shoplist.save(r)
     return jsonify(result)
 
 @app.route("/lampgenie/<shop>/<text>", methods=['GET', 'POST'])

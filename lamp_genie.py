@@ -61,4 +61,5 @@ def search_from_all(text):
 
 if __name__ == '__main__':
     input_txt = input("검색할 책 제목이나 글쓴이 : ").encode('cp949')
-    print(search_from_all(input_txt))
+    for book in search_from_all(input_txt):
+        print(book)
